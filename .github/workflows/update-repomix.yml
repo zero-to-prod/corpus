@@ -10,17 +10,23 @@ on:
 jobs:
   update-repomix:
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+        with:
+          fetch-depth: 0
+
       - name: Run Repomix
         run: docker run -v ${{ github.workspace }}:/app --rm ghcr.io/yamadashy/repomix
-      
+
       - name: Commit and push if changed
         run: |
-          git config --global user.name 'GitHub Action'
-          git config --global user.email 'action@github.com'
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add repomix-output.xml
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update repomix-output.xml" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
