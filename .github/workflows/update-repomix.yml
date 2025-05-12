@@ -1,0 +1,26 @@
+name: Update Repomix Output
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  update-repomix:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Run Repomix
+        run: docker run -v ${{ github.workspace }}:/app --rm ghcr.io/yamadashy/repomix
+      
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add repomix-output.xml
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update repomix-output.xml" && git push)

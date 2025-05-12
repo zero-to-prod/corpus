@@ -1,0 +1,1999 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+4. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+<additional_info>
+
+</additional_info>
+
+</file_summary>
+
+<directory_structure>
+psr-1/
+  psr-1.md
+psr-12/
+  psr-12.md
+psr-2/
+  psr-2.md
+rfc2119/
+  rfc2119.md
+.gitignore
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="psr-1/psr-1.md">
+# PSR-1: Basic Coding Standard
+
+This section of the standard comprises what should be considered the standard coding elements that are required to ensure a high level of technical interoperability between shared PHP code.
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](http://www.ietf.org/rfc/rfc2119.txt).
+
+## 1. Overview[](https://www.php-fig.org/psr/psr-1/#1-overview "Permalink")
+
+- Files MUST use only `<?php` and `<?=` tags.
+    
+- Files MUST use only UTF-8 without BOM for PHP code.
+    
+- Files SHOULD _either_ declare symbols (classes, functions, constants, etc.) _or_ cause side-effects (e.g. generate output, change .ini settings, etc.) but SHOULD NOT do both.
+    
+- Namespaces and classes MUST follow an "autoloading" PSR: [[PSR-0](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md), [PSR-4](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md)].
+    
+- Class names MUST be declared in `StudlyCaps`.
+    
+- Class constants MUST be declared in all upper case with underscore separators.
+    
+- Method names MUST be declared in `camelCase`.
+    
+
+## 2. Files[](https://www.php-fig.org/psr/psr-1/#2-files "Permalink")
+
+### 2.1. PHP Tags[](https://www.php-fig.org/psr/psr-1/#21-php-tags "Permalink")
+
+PHP code MUST use the long `<?php ?>` tags or the short-echo `<?= ?>` tags; it MUST NOT use the other tag variations.
+
+### 2.2. Character Encoding[](https://www.php-fig.org/psr/psr-1/#22-character-encoding "Permalink")
+
+PHP code MUST use only UTF-8 without BOM.
+
+### 2.3. Side Effects[](https://www.php-fig.org/psr/psr-1/#23-side-effects "Permalink")
+
+A file SHOULD declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it SHOULD execute logic with side effects, but SHOULD NOT do both.
+
+The phrase "side effects" means execution of logic not directly related to declaring classes, functions, constants, etc., _merely from including the file_.
+
+"Side effects" include but are not limited to: generating output, explicit use of `require` or `include`, connecting to external services, modifying ini settings, emitting errors or exceptions, modifying global or static variables, reading from or writing to a file, and so on.
+
+The following is an example of a file with both declarations and side effects; i.e, an example of what to avoid:
+
+```php
+<?php
+// side effect: change ini settings
+ini_set('error_reporting', E_ALL);
+
+// side effect: loads a file
+include "file.php";
+
+// side effect: generates output
+echo "<html>\n";
+
+// declaration
+function foo()
+{
+    // function body
+}
+```
+
+The following example is of a file that contains declarations without side effects; i.e., an example of what to emulate:
+
+```php
+<?php
+// declaration
+function foo()
+{
+    // function body
+}
+
+// conditional declaration is *not* a side effect
+if (! function_exists('bar')) {
+    function bar()
+    {
+        // function body
+    }
+}
+```
+
+## 3. Namespace and Class Names[](https://www.php-fig.org/psr/psr-1/#3-namespace-and-class-names "Permalink")
+
+Namespaces and classes MUST follow an "autoloading" PSR: [[PSR-0](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md), [PSR-4](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md)].
+
+This means each class is in a file by itself, and is in a namespace of at least one level: a top-level vendor name.
+
+Class names MUST be declared in `StudlyCaps`.
+
+Code written for PHP 5.3 and after MUST use formal namespaces.
+
+For example:
+
+```php
+<?php
+// PHP 5.3 and later:
+namespace Vendor\Model;
+
+class Foo
+{
+}
+```
+
+Code written for 5.2.x and before SHOULD use the pseudo-namespacing convention of `Vendor_` prefixes on class names.
+
+```php
+<?php
+// PHP 5.2.x and earlier:
+class Vendor_Model_Foo
+{
+}
+```
+
+## 4. Class Constants, Properties, and Methods[](https://www.php-fig.org/psr/psr-1/#4-class-constants-properties-and-methods "Permalink")
+
+The term "class" refers to all classes, interfaces, and traits.
+
+### 4.1. Constants[](https://www.php-fig.org/psr/psr-1/#41-constants "Permalink")
+
+Class constants MUST be declared in all upper case with underscore separators. For example:
+
+```php
+<?php
+namespace Vendor\Model;
+
+class Foo
+{
+    const VERSION = '1.0';
+    const DATE_APPROVED = '2012-06-01';
+}
+```
+
+### 4.2. Properties[](https://www.php-fig.org/psr/psr-1/#42-properties "Permalink")
+
+This guide intentionally avoids any recommendation regarding the use of `$StudlyCaps`, `$camelCase`, or `$under_score` property names.
+
+Whatever naming convention is used SHOULD be applied consistently within a reasonable scope. That scope may be vendor-level, package-level, class-level, or method-level.
+
+### 4.3. Methods[](https://www.php-fig.org/psr/psr-1/#43-methods "Permalink")
+
+Method names MUST be declared in `camelCase()`.
+</file>
+
+<file path="psr-12/psr-12.md">
+# PSR-12: Extended Coding Style
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119).
+
+## Overview[](https://www.php-fig.org/psr/psr-12/#overview "Permalink")
+
+This specification extends, expands and replaces [PSR-2](https://www.php-fig.org/psr/psr-2/), the coding style guide and requires adherence to [PSR-1](https://www.php-fig.org/psr/psr-1/), the basic coding standard.
+
+Like [PSR-2](https://www.php-fig.org/psr/psr-2/), the intent of this specification is to reduce cognitive friction when scanning code from different authors. It does so by enumerating a shared set of rules and expectations about how to format PHP code. This PSR seeks to provide a set way that coding style tools can implement, projects can declare adherence to and developers can easily relate to between different projects. When various authors collaborate across multiple projects, it helps to have one set of guidelines to be used among all those projects. Thus, the benefit of this guide is not in the rules themselves but the sharing of those rules.
+
+[PSR-2](https://www.php-fig.org/psr/psr-2/) was accepted in 2012 and since then a number of changes have been made to PHP which has implications for coding style guidelines. Whilst [PSR-2](https://www.php-fig.org/psr/psr-2/) is very comprehensive of PHP functionality that existed at the time of writing, new functionality is very open to interpretation. This PSR, therefore, seeks to clarify the content of PSR-2 in a more modern context with new functionality available, and make the errata to PSR-2 binding.
+
+### Previous language versions[](https://www.php-fig.org/psr/psr-12/#previous-language-versions "Permalink")
+
+Throughout this document, any instructions MAY be ignored if they do not exist in versions of PHP supported by your project.
+
+### Example[](https://www.php-fig.org/psr/psr-12/#example "Permalink")
+
+This example encompasses some of the rules below as a quick overview:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Vendor\Package;
+
+use Vendor\Package\{ClassA as A, ClassB, ClassC as C};
+use Vendor\Package\SomeNamespace\ClassD as D;
+
+use function Vendor\Package\{functionA, functionB, functionC};
+
+use const Vendor\Package\{ConstantA, ConstantB, ConstantC};
+
+class Foo extends Bar implements FooInterface
+{
+    public function sampleFunction(int $a, int $b = null): array
+    {
+        if ($a === $b) {
+            bar();
+        } elseif ($a > $b) {
+            $foo->bar($arg1);
+        } else {
+            BazClass::bar($arg2, $arg3);
+        }
+    }
+
+    final public static function bar()
+    {
+        // method body
+    }
+}
+```
+
+## 2. General[](https://www.php-fig.org/psr/psr-12/#2-general "Permalink")
+
+### 2.1 Basic Coding Standard[](https://www.php-fig.org/psr/psr-12/#21-basic-coding-standard "Permalink")
+
+Code MUST follow all rules outlined in [PSR-1](https://www.php-fig.org/psr/psr-1/).
+
+The term 'StudlyCaps' in PSR-1 MUST be interpreted as PascalCase where the first letter of each word is capitalized including the very first letter.
+
+### 2.2 Files[](https://www.php-fig.org/psr/psr-12/#22-files "Permalink")
+
+All PHP files MUST use the Unix LF (linefeed) line ending only.
+
+All PHP files MUST end with a non-blank line, terminated with a single LF.
+
+The closing `?>` tag MUST be omitted from files containing only PHP.
+
+### 2.3 Lines[](https://www.php-fig.org/psr/psr-12/#23-lines "Permalink")
+
+There MUST NOT be a hard limit on line length.
+
+The soft limit on line length MUST be 120 characters.
+
+Lines SHOULD NOT be longer than 80 characters; lines longer than that SHOULD be split into multiple subsequent lines of no more than 80 characters each.
+
+There MUST NOT be trailing whitespace at the end of lines.
+
+Blank lines MAY be added to improve readability and to indicate related blocks of code except where explicitly forbidden.
+
+There MUST NOT be more than one statement per line.
+
+### 2.4 Indenting[](https://www.php-fig.org/psr/psr-12/#24-indenting "Permalink")
+
+Code MUST use an indent of 4 spaces for each indent level, and MUST NOT use tabs for indenting.
+
+### 2.5 Keywords and Types[](https://www.php-fig.org/psr/psr-12/#25-keywords-and-types "Permalink")
+
+All PHP reserved keywords and types [[1]](http://php.net/manual/en/reserved.keywords.php)[[2]](http://php.net/manual/en/reserved.other-reserved-words.php) MUST be in lower case.
+
+Any new types and keywords added to future PHP versions MUST be in lower case.
+
+Short form of type keywords MUST be used i.e. `bool` instead of `boolean`, `int` instead of `integer` etc.
+
+## 3. Declare Statements, Namespace, and Import Statements[](https://www.php-fig.org/psr/psr-12/#3-declare-statements-namespace-and-import-statements "Permalink")
+
+The header of a PHP file may consist of a number of different blocks. If present, each of the blocks below MUST be separated by a single blank line, and MUST NOT contain a blank line. Each block MUST be in the order listed below, although blocks that are not relevant may be omitted.
+
+- Opening `<?php` tag.
+- File-level docblock.
+- One or more declare statements.
+- The namespace declaration of the file.
+- One or more class-based `use` import statements.
+- One or more function-based `use` import statements.
+- One or more constant-based `use` import statements.
+- The remainder of the code in the file.
+
+When a file contains a mix of HTML and PHP, any of the above sections may still be used. If so, they MUST be present at the top of the file, even if the remainder of the code consists of a closing PHP tag and then a mixture of HTML and PHP.
+
+When the opening `<?php` tag is on the first line of the file, it MUST be on its own line with no other statements unless it is a file containing markup outside of PHP opening and closing tags.
+
+Import statements MUST never begin with a leading backslash as they must always be fully qualified.
+
+The following example illustrates a complete list of all blocks:
+
+```php
+<?php
+
+/**
+ * This file contains an example of coding styles.
+ */
+
+declare(strict_types=1);
+
+namespace Vendor\Package;
+
+use Vendor\Package\{ClassA as A, ClassB, ClassC as C};
+use Vendor\Package\SomeNamespace\ClassD as D;
+use Vendor\Package\AnotherNamespace\ClassE as E;
+
+use function Vendor\Package\{functionA, functionB, functionC};
+use function Another\Vendor\functionD;
+
+use const Vendor\Package\{CONSTANT_A, CONSTANT_B, CONSTANT_C};
+use const Another\Vendor\CONSTANT_D;
+
+/**
+ * FooBar is an example class.
+ */
+class FooBar
+{
+    // ... additional PHP code ...
+}
+
+```
+
+Compound namespaces with a depth of more than two MUST NOT be used. Therefore the following is the maximum compounding depth allowed:
+
+```php
+<?php
+
+use Vendor\Package\SomeNamespace\{
+    SubnamespaceOne\ClassA,
+    SubnamespaceOne\ClassB,
+    SubnamespaceTwo\ClassY,
+    ClassZ,
+};
+```
+
+And the following would not be allowed:
+
+```php
+<?php
+
+use Vendor\Package\SomeNamespace\{
+    SubnamespaceOne\AnotherNamespace\ClassA,
+    SubnamespaceOne\ClassB,
+    ClassZ,
+};
+```
+
+When wishing to declare strict types in files containing markup outside PHP opening and closing tags, the declaration MUST be on the first line of the file and include an opening PHP tag, the strict types declaration and closing tag.
+
+For example:
+
+```php
+<?php declare(strict_types=1) ?>
+<html>
+<body>
+    <?php
+        // ... additional PHP code ...
+    ?>
+</body>
+</html>
+```
+
+Declare statements MUST contain no spaces and MUST be exactly `declare(strict_types=1)` (with an optional semicolon terminator).
+
+Block declare statements are allowed and MUST be formatted as below. Note position of braces and spacing:
+
+```php
+declare(ticks=1) {
+    // some code
+}
+```
+
+## 4. Classes, Properties, and Methods[](https://www.php-fig.org/psr/psr-12/#4-classes-properties-and-methods "Permalink")
+
+The term "class" refers to all classes, interfaces, and traits.
+
+Any closing brace MUST NOT be followed by any comment or statement on the same line.
+
+When instantiating a new class, parentheses MUST always be present even when there are no arguments passed to the constructor.
+
+```php
+new Foo();
+```
+
+### 4.1 Extends and Implements[](https://www.php-fig.org/psr/psr-12/#41-extends-and-implements "Permalink")
+
+The `extends` and `implements` keywords MUST be declared on the same line as the class name.
+
+The opening brace for the class MUST go on its own line; the closing brace for the class MUST go on the next line after the body.
+
+Opening braces MUST be on their own line and MUST NOT be preceded or followed by a blank line.
+
+Closing braces MUST be on their own line and MUST NOT be preceded by a blank line.
+
+```php
+<?php
+
+namespace Vendor\Package;
+
+use FooClass;
+use BarClass as Bar;
+use OtherVendor\OtherPackage\BazClass;
+
+class ClassName extends ParentClass implements \ArrayAccess, \Countable
+{
+    // constants, properties, methods
+}
+```
+
+Lists of `implements` and, in the case of interfaces, `extends` MAY be split across multiple lines, where each subsequent line is indented once. When doing so, the first item in the list MUST be on the next line, and there MUST be only one interface per line.
+
+```php
+<?php
+
+namespace Vendor\Package;
+
+use FooClass;
+use BarClass as Bar;
+use OtherVendor\OtherPackage\BazClass;
+
+class ClassName extends ParentClass implements
+    \ArrayAccess,
+    \Countable,
+    \Serializable
+{
+    // constants, properties, methods
+}
+```
+
+### 4.2 Using traits[](https://www.php-fig.org/psr/psr-12/#42-using-traits "Permalink")
+
+The `use` keyword used inside the classes to implement traits MUST be declared on the next line after the opening brace.
+
+```php
+<?php
+
+namespace Vendor\Package;
+
+use Vendor\Package\FirstTrait;
+
+class ClassName
+{
+    use FirstTrait;
+}
+```
+
+Each individual trait that is imported into a class MUST be included one-per-line and each inclusion MUST have its own `use` import statement.
+
+```php
+<?php
+
+namespace Vendor\Package;
+
+use Vendor\Package\FirstTrait;
+use Vendor\Package\SecondTrait;
+use Vendor\Package\ThirdTrait;
+
+class ClassName
+{
+    use FirstTrait;
+    use SecondTrait;
+    use ThirdTrait;
+}
+```
+
+When the class has nothing after the `use` import statement, the class closing brace MUST be on the next line after the `use` import statement.
+
+```php
+<?php
+
+namespace Vendor\Package;
+
+use Vendor\Package\FirstTrait;
+
+class ClassName
+{
+    use FirstTrait;
+}
+```
+
+Otherwise, it MUST have a blank line after the `use` import statement.
+
+```php
+<?php
+
+namespace Vendor\Package;
+
+use Vendor\Package\FirstTrait;
+
+class ClassName
+{
+    use FirstTrait;
+
+    private $property;
+}
+```
+
+When using the `insteadof` and `as` operators they must be used as follows taking note of indentation, spacing, and new lines.
+
+```php
+<?php
+
+class Talker
+{
+    use A;
+    use B {
+        A::smallTalk insteadof B;
+    }
+    use C {
+        B::bigTalk insteadof C;
+        C::mediumTalk as FooBar;
+    }
+}
+```
+
+### 4.3 Properties and Constants[](https://www.php-fig.org/psr/psr-12/#43-properties-and-constants "Permalink")
+
+Visibility MUST be declared on all properties.
+
+Visibility MUST be declared on all constants if your project PHP minimum version supports constant visibilities (PHP 7.1 or later).
+
+The `var` keyword MUST NOT be used to declare a property.
+
+There MUST NOT be more than one property declared per statement.
+
+Property names MUST NOT be prefixed with a single underscore to indicate protected or private visibility. That is, an underscore prefix explicitly has no meaning.
+
+There MUST be a space between type declaration and property name.
+
+A property declaration looks like the following:
+
+```php
+<?php
+
+namespace Vendor\Package;
+
+class ClassName
+{
+    public $foo = null;
+    public static int $bar = 0;
+}
+```
+
+### 4.4 Methods and Functions[](https://www.php-fig.org/psr/psr-12/#44-methods-and-functions "Permalink")
+
+Visibility MUST be declared on all methods.
+
+Method names MUST NOT be prefixed with a single underscore to indicate protected or private visibility. That is, an underscore prefix explicitly has no meaning.
+
+Method and function names MUST NOT be declared with space after the method name. The opening brace MUST go on its own line, and the closing brace MUST go on the next line following the body. There MUST NOT be a space after the opening parenthesis, and there MUST NOT be a space before the closing parenthesis.
+
+A method declaration looks like the following. Note the placement of parentheses, commas, spaces, and braces:
+
+```php
+<?php
+
+namespace Vendor\Package;
+
+class ClassName
+{
+    public function fooBarBaz($arg1, &$arg2, $arg3 = [])
+    {
+        // method body
+    }
+}
+```
+
+A function declaration looks like the following. Note the placement of parentheses, commas, spaces, and braces:
+
+```php
+<?php
+
+function fooBarBaz($arg1, &$arg2, $arg3 = [])
+{
+    // function body
+}
+```
+
+### 4.5 Method and Function Arguments[](https://www.php-fig.org/psr/psr-12/#45-method-and-function-arguments "Permalink")
+
+In the argument list, there MUST NOT be a space before each comma, and there MUST be one space after each comma.
+
+Method and function arguments with default values MUST go at the end of the argument list.
+
+```php
+<?php
+
+namespace Vendor\Package;
+
+class ClassName
+{
+    public function foo(int $arg1, &$arg2, $arg3 = [])
+    {
+        // method body
+    }
+}
+```
+
+Argument lists MAY be split across multiple lines, where each subsequent line is indented once. When doing so, the first item in the list MUST be on the next line, and there MUST be only one argument per line.
+
+When the argument list is split across multiple lines, the closing parenthesis and opening brace MUST be placed together on their own line with one space between them.
+
+```php
+<?php
+
+namespace Vendor\Package;
+
+class ClassName
+{
+    public function aVeryLongMethodName(
+        ClassTypeHint $arg1,
+        &$arg2,
+        array $arg3 = []
+    ) {
+        // method body
+    }
+}
+```
+
+When you have a return type declaration present, there MUST be one space after the colon followed by the type declaration. The colon and declaration MUST be on the same line as the argument list closing parenthesis with no spaces between the two characters.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Vendor\Package;
+
+class ReturnTypeVariations
+{
+    public function functionName(int $arg1, $arg2): string
+    {
+        return 'foo';
+    }
+
+    public function anotherFunction(
+        string $foo,
+        string $bar,
+        int $baz
+    ): string {
+        return 'foo';
+    }
+}
+```
+
+In nullable type declarations, there MUST NOT be a space between the question mark and the type.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Vendor\Package;
+
+class ReturnTypeVariations
+{
+    public function functionName(?string $arg1, ?int &$arg2): ?string
+    {
+        return 'foo';
+    }
+}
+```
+
+When using the reference operator `&` before an argument, there MUST NOT be a space after it, like in the previous example.
+
+There MUST NOT be a space between the variadic three dot operator and the argument name:
+
+```php
+public function process(string $algorithm, ...$parts)
+{
+    // processing
+}
+```
+
+When combining both the reference operator and the variadic three dot operator, there MUST NOT be any space between the two of them:
+
+```php
+public function process(string $algorithm, &...$parts)
+{
+    // processing
+}
+```
+
+### 4.6 `abstract`, `final`, and `static`[](https://www.php-fig.org/psr/psr-12/#46-abstract-final-and-static "Permalink")
+
+When present, the `abstract` and `final` declarations MUST precede the visibility declaration.
+
+When present, the `static` declaration MUST come after the visibility declaration.
+
+```php
+<?php
+
+namespace Vendor\Package;
+
+abstract class ClassName
+{
+    protected static $foo;
+
+    abstract protected function zim();
+
+    final public static function bar()
+    {
+        // method body
+    }
+}
+```
+
+### 4.7 Method and Function Calls[](https://www.php-fig.org/psr/psr-12/#47-method-and-function-calls "Permalink")
+
+When making a method or function call, there MUST NOT be a space between the method or function name and the opening parenthesis, there MUST NOT be a space after the opening parenthesis, and there MUST NOT be a space before the closing parenthesis. In the argument list, there MUST NOT be a space before each comma, and there MUST be one space after each comma.
+
+```php
+<?php
+
+bar();
+$foo->bar($arg1);
+Foo::bar($arg2, $arg3);
+```
+
+Argument lists MAY be split across multiple lines, where each subsequent line is indented once. When doing so, the first item in the list MUST be on the next line, and there MUST be only one argument per line. A single argument being split across multiple lines (as might be the case with an anonymous function or array) does not constitute splitting the argument list itself.
+
+```php
+<?php
+
+$foo->bar(
+    $longArgument,
+    $longerArgument,
+    $muchLongerArgument
+);
+```
+
+```php
+<?php
+
+somefunction($foo, $bar, [
+  // ...
+], $baz);
+
+$app->get('/hello/{name}', function ($name) use ($app) {
+    return 'Hello ' . $app->escape($name);
+});
+```
+
+## 5. Control Structures[](https://www.php-fig.org/psr/psr-12/#5-control-structures "Permalink")
+
+The general style rules for control structures are as follows:
+
+- There MUST be one space after the control structure keyword
+- There MUST NOT be a space after the opening parenthesis
+- There MUST NOT be a space before the closing parenthesis
+- There MUST be one space between the closing parenthesis and the opening brace
+- The structure body MUST be indented once
+- The body MUST be on the next line after the opening brace
+- The closing brace MUST be on the next line after the body
+
+The body of each structure MUST be enclosed by braces. This standardizes how the structures look and reduces the likelihood of introducing errors as new lines get added to the body.
+
+### 5.1 `if`, `elseif`, `else`[](https://www.php-fig.org/psr/psr-12/#51-if-elseif-else "Permalink")
+
+An `if` structure looks like the following. Note the placement of parentheses, spaces, and braces; and that `else` and `elseif` are on the same line as the closing brace from the earlier body.
+
+```php
+<?php
+
+if ($expr1) {
+    // if body
+} elseif ($expr2) {
+    // elseif body
+} else {
+    // else body;
+}
+```
+
+The keyword `elseif` SHOULD be used instead of `else if` so that all control keywords look like single words.
+
+Expressions in parentheses MAY be split across multiple lines, where each subsequent line is indented at least once. When doing so, the first condition MUST be on the next line. The closing parenthesis and opening brace MUST be placed together on their own line with one space between them. Boolean operators between conditions MUST always be at the beginning or at the end of the line, not a mix of both.
+
+```php
+<?php
+
+if (
+    $expr1
+    && $expr2
+) {
+    // if body
+} elseif (
+    $expr3
+    && $expr4
+) {
+    // elseif body
+}
+```
+
+### 5.2 `switch`, `case`[](https://www.php-fig.org/psr/psr-12/#52-switch-case "Permalink")
+
+A `switch` structure looks like the following. Note the placement of parentheses, spaces, and braces. The `case` statement MUST be indented once from `switch`, and the `break` keyword (or other terminating keywords) MUST be indented at the same level as the `case` body. There MUST be a comment such as `// no break` when fall-through is intentional in a non-empty `case` body.
+
+```php
+<?php
+
+switch ($expr) {
+    case 0:
+        echo 'First case, with a break';
+        break;
+    case 1:
+        echo 'Second case, which falls through';
+        // no break
+    case 2:
+    case 3:
+    case 4:
+        echo 'Third case, return instead of break';
+        return;
+    default:
+        echo 'Default case';
+        break;
+}
+```
+
+Expressions in parentheses MAY be split across multiple lines, where each subsequent line is indented at least once. When doing so, the first condition MUST be on the next line. The closing parenthesis and opening brace MUST be placed together on their own line with one space between them. Boolean operators between conditions MUST always be at the beginning or at the end of the line, not a mix of both.
+
+```php
+<?php
+
+switch (
+    $expr1
+    && $expr2
+) {
+    // structure body
+}
+```
+
+### 5.3 `while`, `do while`[](https://www.php-fig.org/psr/psr-12/#53-while-do-while "Permalink")
+
+A `while` statement looks like the following. Note the placement of parentheses, spaces, and braces.
+
+```php
+<?php
+
+while ($expr) {
+    // structure body
+}
+```
+
+Expressions in parentheses MAY be split across multiple lines, where each subsequent line is indented at least once. When doing so, the first condition MUST be on the next line. The closing parenthesis and opening brace MUST be placed together on their own line with one space between them. Boolean operators between conditions MUST always be at the beginning or at the end of the line, not a mix of both.
+
+```php
+<?php
+
+while (
+    $expr1
+    && $expr2
+) {
+    // structure body
+}
+```
+
+Similarly, a `do while` statement looks like the following. Note the placement of parentheses, spaces, and braces.
+
+```php
+<?php
+
+do {
+    // structure body;
+} while ($expr);
+```
+
+Expressions in parentheses MAY be split across multiple lines, where each subsequent line is indented at least once. When doing so, the first condition MUST be on the next line. Boolean operators between conditions MUST always be at the beginning or at the end of the line, not a mix of both.
+
+```php
+<?php
+
+do {
+    // structure body;
+} while (
+    $expr1
+    && $expr2
+);
+```
+
+### 5.4 `for`[](https://www.php-fig.org/psr/psr-12/#54-for "Permalink")
+
+A `for` statement looks like the following. Note the placement of parentheses, spaces, and braces.
+
+```php
+<?php
+
+for ($i = 0; $i < 10; $i++) {
+    // for body
+}
+```
+
+Expressions in parentheses MAY be split across multiple lines, where each subsequent line is indented at least once. When doing so, the first expression MUST be on the next line. The closing parenthesis and opening brace MUST be placed together on their own line with one space between them.
+
+```php
+<?php
+
+for (
+    $i = 0;
+    $i < 10;
+    $i++
+) {
+    // for body
+}
+```
+
+### 5.5 `foreach`[](https://www.php-fig.org/psr/psr-12/#55-foreach "Permalink")
+
+A `foreach` statement looks like the following. Note the placement of parentheses, spaces, and braces.
+
+```php
+<?php
+
+foreach ($iterable as $key => $value) {
+    // foreach body
+}
+```
+
+### 5.6 `try`, `catch`, `finally`[](https://www.php-fig.org/psr/psr-12/#56-try-catch-finally "Permalink")
+
+A `try-catch-finally` block looks like the following. Note the placement of parentheses, spaces, and braces.
+
+```php
+<?php
+
+try {
+    // try body
+} catch (FirstThrowableType $e) {
+    // catch body
+} catch (OtherThrowableType | AnotherThrowableType $e) {
+    // catch body
+} finally {
+    // finally body
+}
+```
+
+## 6. Operators[](https://www.php-fig.org/psr/psr-12/#6-operators "Permalink")
+
+Style rules for operators are grouped by arity (the number of operands they take).
+
+When space is permitted around an operator, multiple spaces MAY be used for readability purposes.
+
+All operators not described here are left undefined.
+
+### 6.1. Unary operators[](https://www.php-fig.org/psr/psr-12/#61-unary-operators "Permalink")
+
+The increment/decrement operators MUST NOT have any space between the operator and operand.
+
+```php
+$i++;
+++$j;
+```
+
+Type casting operators MUST NOT have any space within the parentheses:
+
+```php
+$intValue = (int) $input;
+```
+
+### 6.2. Binary operators[](https://www.php-fig.org/psr/psr-12/#62-binary-operators "Permalink")
+
+All binary [arithmetic](http://php.net/manual/en/language.operators.arithmetic.php), [comparison](http://php.net/manual/en/language.operators.comparison.php), [assignment](http://php.net/manual/en/language.operators.assignment.php), [bitwise](http://php.net/manual/en/language.operators.bitwise.php), [logical](http://php.net/manual/en/language.operators.logical.php), [string](http://php.net/manual/en/language.operators.string.php), and [type](http://php.net/manual/en/language.operators.type.php) operators MUST be preceded and followed by at least one space:
+
+```php
+if ($a === $b) {
+    $foo = $bar ?? $a ?? $b;
+} elseif ($a > $b) {
+    $foo = $a + $b * $c;
+}
+```
+
+### 6.3. Ternary operators[](https://www.php-fig.org/psr/psr-12/#63-ternary-operators "Permalink")
+
+The conditional operator, also known simply as the ternary operator, MUST be preceded and followed by at least one space around both the `?` and `:` characters:
+
+```php
+$variable = $foo ? 'foo' : 'bar';
+```
+
+When the middle operand of the conditional operator is omitted, the operator MUST follow the same style rules as other binary [comparison](http://php.net/manual/en/language.operators.comparison.php) operators:
+
+```php
+$variable = $foo ?: 'bar';
+```
+
+## 7. Closures[](https://www.php-fig.org/psr/psr-12/#7-closures "Permalink")
+
+Closures MUST be declared with a space after the `function` keyword, and a space before and after the `use` keyword.
+
+The opening brace MUST go on the same line, and the closing brace MUST go on the next line following the body.
+
+There MUST NOT be a space after the opening parenthesis of the argument list or variable list, and there MUST NOT be a space before the closing parenthesis of the argument list or variable list.
+
+In the argument list and variable list, there MUST NOT be a space before each comma, and there MUST be one space after each comma.
+
+Closure arguments with default values MUST go at the end of the argument list.
+
+If a return type is present, it MUST follow the same rules as with normal functions and methods; if the `use` keyword is present, the colon MUST follow the `use` list closing parentheses with no spaces between the two characters.
+
+A closure declaration looks like the following. Note the placement of parentheses, commas, spaces, and braces:
+
+```php
+<?php
+
+$closureWithArgs = function ($arg1, $arg2) {
+    // body
+};
+
+$closureWithArgsAndVars = function ($arg1, $arg2) use ($var1, $var2) {
+    // body
+};
+
+$closureWithArgsVarsAndReturn = function ($arg1, $arg2) use ($var1, $var2): bool {
+    // body
+};
+```
+
+Argument lists and variable lists MAY be split across multiple lines, where each subsequent line is indented once. When doing so, the first item in the list MUST be on the next line, and there MUST be only one argument or variable per line.
+
+When the ending list (whether of arguments or variables) is split across multiple lines, the closing parenthesis and opening brace MUST be placed together on their own line with one space between them.
+
+The following are examples of closures with and without argument lists and variable lists split across multiple lines.
+
+```php
+<?php
+
+$longArgs_noVars = function (
+    $longArgument,
+    $longerArgument,
+    $muchLongerArgument
+) {
+   // body
+};
+
+$noArgs_longVars = function () use (
+    $longVar1,
+    $longerVar2,
+    $muchLongerVar3
+) {
+   // body
+};
+
+$longArgs_longVars = function (
+    $longArgument,
+    $longerArgument,
+    $muchLongerArgument
+) use (
+    $longVar1,
+    $longerVar2,
+    $muchLongerVar3
+) {
+   // body
+};
+
+$longArgs_shortVars = function (
+    $longArgument,
+    $longerArgument,
+    $muchLongerArgument
+) use ($var1) {
+   // body
+};
+
+$shortArgs_longVars = function ($arg) use (
+    $longVar1,
+    $longerVar2,
+    $muchLongerVar3
+) {
+   // body
+};
+```
+
+Note that the formatting rules also apply when the closure is used directly in a function or method call as an argument.
+
+```php
+<?php
+
+$foo->bar(
+    $arg1,
+    function ($arg2) use ($var1) {
+        // body
+    },
+    $arg3
+);
+```
+
+## 8. Anonymous Classes[](https://www.php-fig.org/psr/psr-12/#8-anonymous-classes "Permalink")
+
+Anonymous Classes MUST follow the same guidelines and principles as closures in the above section.
+
+```php
+<?php
+
+$instance = new class {};
+```
+
+The opening brace MAY be on the same line as the `class` keyword so long as the list of `implements` interfaces does not wrap. If the list of interfaces wraps, the brace MUST be placed on the line immediately following the last interface.
+
+```php
+<?php
+
+// Brace on the same line
+$instance = new class extends \Foo implements \HandleableInterface {
+    // Class content
+};
+
+// Brace on the next line
+$instance = new class extends \Foo implements
+    \ArrayAccess,
+    \Countable,
+    \Serializable
+{
+    // Class content
+};
+```
+</file>
+
+<file path="psr-2/psr-2.md">
+# PSR-2: Coding Style Guide
+
+> **Deprecated** - As of 2019-08-10 PSR-2 has been marked as deprecated. [PSR-12](https://www.php-fig.org/psr/psr-12/) is now recommended as an alternative.
+
+This guide extends and expands on [PSR-1](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md), the basic coding standard.
+
+The intent of this guide is to reduce cognitive friction when scanning code from different authors. It does so by enumerating a shared set of rules and expectations about how to format PHP code.
+
+The style rules herein are derived from commonalities among the various member projects. When various authors collaborate across multiple projects, it helps to have one set of guidelines to be used among all those projects. Thus, the benefit of this guide is not in the rules themselves, but in the sharing of those rules.
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](http://www.ietf.org/rfc/rfc2119.txt).
+
+## 1. Overview[](https://www.php-fig.org/psr/psr-2/#1-overview "Permalink")
+
+- Code MUST follow a "coding style guide" PSR [[PSR-1](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md)].
+    
+- Code MUST use 4 spaces for indenting, not tabs.
+    
+- There MUST NOT be a hard limit on line length; the soft limit MUST be 120 characters; lines SHOULD be 80 characters or less.
+    
+- There MUST be one blank line after the `namespace` declaration, and there MUST be one blank line after the block of `use` declarations.
+    
+- Opening braces for classes MUST go on the next line, and closing braces MUST go on the next line after the body.
+    
+- Opening braces for methods MUST go on the next line, and closing braces MUST go on the next line after the body.
+    
+- Visibility MUST be declared on all properties and methods; `abstract` and `final` MUST be declared before the visibility; `static` MUST be declared after the visibility.
+    
+- Control structure keywords MUST have one space after them; method and function calls MUST NOT.
+    
+- Opening braces for control structures MUST go on the same line, and closing braces MUST go on the next line after the body.
+    
+- Opening parentheses for control structures MUST NOT have a space after them, and closing parentheses for control structures MUST NOT have a space before.
+    
+
+### 1.1. Example[](https://www.php-fig.org/psr/psr-2/#11-example "Permalink")
+
+This example encompasses some of the rules below as a quick overview:
+
+```php
+<?php
+namespace Vendor\Package;
+
+use FooInterface;
+use BarClass as Bar;
+use OtherVendor\OtherPackage\BazClass;
+
+class Foo extends Bar implements FooInterface
+{
+    public function sampleMethod($a, $b = null)
+    {
+        if ($a === $b) {
+            bar();
+        } elseif ($a > $b) {
+            $foo->bar($arg1);
+        } else {
+            BazClass::bar($arg2, $arg3);
+        }
+    }
+
+    final public static function bar()
+    {
+        // method body
+    }
+}
+```
+
+## 2. General[](https://www.php-fig.org/psr/psr-2/#2-general "Permalink")
+
+### 2.1. Basic Coding Standard[](https://www.php-fig.org/psr/psr-2/#21-basic-coding-standard "Permalink")
+
+Code MUST follow all rules outlined in [PSR-1](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md).
+
+### 2.2. Files[](https://www.php-fig.org/psr/psr-2/#22-files "Permalink")
+
+All PHP files MUST use the Unix LF (linefeed) line ending.
+
+All PHP files MUST end with a single blank line.
+
+The closing `?>` tag MUST be omitted from files containing only PHP.
+
+### 2.3. Lines[](https://www.php-fig.org/psr/psr-2/#23-lines "Permalink")
+
+There MUST NOT be a hard limit on line length.
+
+The soft limit on line length MUST be 120 characters; automated style checkers MUST warn but MUST NOT error at the soft limit.
+
+Lines SHOULD NOT be longer than 80 characters; lines longer than that SHOULD be split into multiple subsequent lines of no more than 80 characters each.
+
+There MUST NOT be trailing whitespace at the end of non-blank lines.
+
+Blank lines MAY be added to improve readability and to indicate related blocks of code.
+
+There MUST NOT be more than one statement per line.
+
+### 2.4. Indenting[](https://www.php-fig.org/psr/psr-2/#24-indenting "Permalink")
+
+Code MUST use an indent of 4 spaces, and MUST NOT use tabs for indenting.
+
+> N.b.: Using only spaces, and not mixing spaces with tabs, helps to avoid problems with diffs, patches, history, and annotations. The use of spaces also makes it easy to insert fine-grained sub-indentation for inter-line alignment.
+
+### 2.5. Keywords and True/False/Null[](https://www.php-fig.org/psr/psr-2/#25-keywords-and-truefalsenull "Permalink")
+
+PHP [keywords](http://php.net/manual/en/reserved.keywords.php) MUST be in lower case.
+
+The PHP constants `true`, `false`, and `null` MUST be in lower case.
+
+## 3. Namespace and Use Declarations[](https://www.php-fig.org/psr/psr-2/#3-namespace-and-use-declarations "Permalink")
+
+When present, there MUST be one blank line after the `namespace` declaration.
+
+When present, all `use` declarations MUST go after the `namespace` declaration.
+
+There MUST be one `use` keyword per declaration.
+
+There MUST be one blank line after the `use` block.
+
+For example:
+
+```php
+<?php
+namespace Vendor\Package;
+
+use FooClass;
+use BarClass as Bar;
+use OtherVendor\OtherPackage\BazClass;
+
+// ... additional PHP code ...
+
+```
+
+## 4. Classes, Properties, and Methods[](https://www.php-fig.org/psr/psr-2/#4-classes-properties-and-methods "Permalink")
+
+The term "class" refers to all classes, interfaces, and traits.
+
+### 4.1. Extends and Implements[](https://www.php-fig.org/psr/psr-2/#41-extends-and-implements "Permalink")
+
+The `extends` and `implements` keywords MUST be declared on the same line as the class name.
+
+The opening brace for the class MUST go on its own line; the closing brace for the class MUST go on the next line after the body.
+
+```php
+<?php
+namespace Vendor\Package;
+
+use FooClass;
+use BarClass as Bar;
+use OtherVendor\OtherPackage\BazClass;
+
+class ClassName extends ParentClass implements \ArrayAccess, \Countable
+{
+    // constants, properties, methods
+}
+```
+
+Lists of `implements` MAY be split across multiple lines, where each subsequent line is indented once. When doing so, the first item in the list MUST be on the next line, and there MUST be only one interface per line.
+
+```php
+<?php
+namespace Vendor\Package;
+
+use FooClass;
+use BarClass as Bar;
+use OtherVendor\OtherPackage\BazClass;
+
+class ClassName extends ParentClass implements
+    \ArrayAccess,
+    \Countable,
+    \Serializable
+{
+    // constants, properties, methods
+}
+```
+
+### 4.2. Properties[](https://www.php-fig.org/psr/psr-2/#42-properties "Permalink")
+
+Visibility MUST be declared on all properties.
+
+The `var` keyword MUST NOT be used to declare a property.
+
+There MUST NOT be more than one property declared per statement.
+
+Property names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility.
+
+A property declaration looks like the following.
+
+```php
+<?php
+namespace Vendor\Package;
+
+class ClassName
+{
+    public $foo = null;
+}
+```
+
+### 4.3. Methods[](https://www.php-fig.org/psr/psr-2/#43-methods "Permalink")
+
+Visibility MUST be declared on all methods.
+
+Method names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility.
+
+Method names MUST NOT be declared with a space after the method name. The opening brace MUST go on its own line, and the closing brace MUST go on the next line following the body. There MUST NOT be a space after the opening parenthesis, and there MUST NOT be a space before the closing parenthesis.
+
+A method declaration looks like the following. Note the placement of parentheses, commas, spaces, and braces:
+
+```php
+<?php
+namespace Vendor\Package;
+
+class ClassName
+{
+    public function fooBarBaz($arg1, &$arg2, $arg3 = [])
+    {
+        // method body
+    }
+}
+```
+
+### 4.4. Method Arguments[](https://www.php-fig.org/psr/psr-2/#44-method-arguments "Permalink")
+
+In the argument list, there MUST NOT be a space before each comma, and there MUST be one space after each comma.
+
+Method arguments with default values MUST go at the end of the argument list.
+
+```php
+<?php
+namespace Vendor\Package;
+
+class ClassName
+{
+    public function foo($arg1, &$arg2, $arg3 = [])
+    {
+        // method body
+    }
+}
+```
+
+Argument lists MAY be split across multiple lines, where each subsequent line is indented once. When doing so, the first item in the list MUST be on the next line, and there MUST be only one argument per line.
+
+When the argument list is split across multiple lines, the closing parenthesis and opening brace MUST be placed together on their own line with one space between them.
+
+```php
+<?php
+namespace Vendor\Package;
+
+class ClassName
+{
+    public function aVeryLongMethodName(
+        ClassTypeHint $arg1,
+        &$arg2,
+        array $arg3 = []
+    ) {
+        // method body
+    }
+}
+```
+
+### 4.5. `abstract`, `final`, and `static`[](https://www.php-fig.org/psr/psr-2/#45-abstract-final-and-static "Permalink")
+
+When present, the `abstract` and `final` declarations MUST precede the visibility declaration.
+
+When present, the `static` declaration MUST come after the visibility declaration.
+
+```php
+<?php
+namespace Vendor\Package;
+
+abstract class ClassName
+{
+    protected static $foo;
+
+    abstract protected function zim();
+
+    final public static function bar()
+    {
+        // method body
+    }
+}
+```
+
+### 4.6. Method and Function Calls[](https://www.php-fig.org/psr/psr-2/#46-method-and-function-calls "Permalink")
+
+When making a method or function call, there MUST NOT be a space between the method or function name and the opening parenthesis, there MUST NOT be a space after the opening parenthesis, and there MUST NOT be a space before the closing parenthesis. In the argument list, there MUST NOT be a space before each comma, and there MUST be one space after each comma.
+
+```php
+<?php
+bar();
+$foo->bar($arg1);
+Foo::bar($arg2, $arg3);
+```
+
+Argument lists MAY be split across multiple lines, where each subsequent line is indented once. When doing so, the first item in the list MUST be on the next line, and there MUST be only one argument per line.
+
+```php
+<?php
+$foo->bar(
+    $longArgument,
+    $longerArgument,
+    $muchLongerArgument
+);
+```
+
+## 5. Control Structures[](https://www.php-fig.org/psr/psr-2/#5-control-structures "Permalink")
+
+The general style rules for control structures are as follows:
+
+- There MUST be one space after the control structure keyword
+- There MUST NOT be a space after the opening parenthesis
+- There MUST NOT be a space before the closing parenthesis
+- There MUST be one space between the closing parenthesis and the opening brace
+- The structure body MUST be indented once
+- The closing brace MUST be on the next line after the body
+
+The body of each structure MUST be enclosed by braces. This standardizes how the structures look, and reduces the likelihood of introducing errors as new lines get added to the body.
+
+### 5.1. `if`, `elseif`, `else`[](https://www.php-fig.org/psr/psr-2/#51-if-elseif-else "Permalink")
+
+An `if` structure looks like the following. Note the placement of parentheses, spaces, and braces; and that `else` and `elseif` are on the same line as the closing brace from the earlier body.
+
+```php
+<?php
+if ($expr1) {
+    // if body
+} elseif ($expr2) {
+    // elseif body
+} else {
+    // else body;
+}
+```
+
+The keyword `elseif` SHOULD be used instead of `else if` so that all control keywords look like single words.
+
+### 5.2. `switch`, `case`[](https://www.php-fig.org/psr/psr-2/#52-switch-case "Permalink")
+
+A `switch` structure looks like the following. Note the placement of parentheses, spaces, and braces. The `case` statement MUST be indented once from `switch`, and the `break` keyword (or other terminating keyword) MUST be indented at the same level as the `case` body. There MUST be a comment such as `// no break` when fall-through is intentional in a non-empty `case` body.
+
+```php
+<?php
+switch ($expr) {
+    case 0:
+        echo 'First case, with a break';
+        break;
+    case 1:
+        echo 'Second case, which falls through';
+        // no break
+    case 2:
+    case 3:
+    case 4:
+        echo 'Third case, return instead of break';
+        return;
+    default:
+        echo 'Default case';
+        break;
+}
+```
+
+### 5.3. `while`, `do while`[](https://www.php-fig.org/psr/psr-2/#53-while-do-while "Permalink")
+
+A `while` statement looks like the following. Note the placement of parentheses, spaces, and braces.
+
+```php
+<?php
+while ($expr) {
+    // structure body
+}
+```
+
+Similarly, a `do while` statement looks like the following. Note the placement of parentheses, spaces, and braces.
+
+```php
+<?php
+do {
+    // structure body;
+} while ($expr);
+```
+
+### 5.4. `for`[](https://www.php-fig.org/psr/psr-2/#54-for "Permalink")
+
+A `for` statement looks like the following. Note the placement of parentheses, spaces, and braces.
+
+```php
+<?php
+for ($i = 0; $i < 10; $i++) {
+    // for body
+}
+```
+
+### 5.5. `foreach`[](https://www.php-fig.org/psr/psr-2/#55-foreach "Permalink")
+
+A `foreach` statement looks like the following. Note the placement of parentheses, spaces, and braces.
+
+```php
+<?php
+foreach ($iterable as $key => $value) {
+    // foreach body
+}
+```
+
+### 5.6. `try`, `catch`[](https://www.php-fig.org/psr/psr-2/#56-try-catch "Permalink")
+
+A `try catch` block looks like the following. Note the placement of parentheses, spaces, and braces.
+
+```php
+<?php
+try {
+    // try body
+} catch (FirstExceptionType $e) {
+    // catch body
+} catch (OtherExceptionType $e) {
+    // catch body
+}
+```
+
+## 6. Closures[](https://www.php-fig.org/psr/psr-2/#6-closures "Permalink")
+
+Closures MUST be declared with a space after the `function` keyword, and a space before and after the `use` keyword.
+
+The opening brace MUST go on the same line, and the closing brace MUST go on the next line following the body.
+
+There MUST NOT be a space after the opening parenthesis of the argument list or variable list, and there MUST NOT be a space before the closing parenthesis of the argument list or variable list.
+
+In the argument list and variable list, there MUST NOT be a space before each comma, and there MUST be one space after each comma.
+
+Closure arguments with default values MUST go at the end of the argument list.
+
+A closure declaration looks like the following. Note the placement of parentheses, commas, spaces, and braces:
+
+```php
+<?php
+$closureWithArgs = function ($arg1, $arg2) {
+    // body
+};
+
+$closureWithArgsAndVars = function ($arg1, $arg2) use ($var1, $var2) {
+    // body
+};
+```
+
+Argument lists and variable lists MAY be split across multiple lines, where each subsequent line is indented once. When doing so, the first item in the list MUST be on the next line, and there MUST be only one argument or variable per line.
+
+When the ending list (whether of arguments or variables) is split across multiple lines, the closing parenthesis and opening brace MUST be placed together on their own line with one space between them.
+
+The following are examples of closures with and without argument lists and variable lists split across multiple lines.
+
+```php
+<?php
+$longArgs_noVars = function (
+    $longArgument,
+    $longerArgument,
+    $muchLongerArgument
+) {
+    // body
+};
+
+$noArgs_longVars = function () use (
+    $longVar1,
+    $longerVar2,
+    $muchLongerVar3
+) {
+    // body
+};
+
+$longArgs_longVars = function (
+    $longArgument,
+    $longerArgument,
+    $muchLongerArgument
+) use (
+    $longVar1,
+    $longerVar2,
+    $muchLongerVar3
+) {
+    // body
+};
+
+$longArgs_shortVars = function (
+    $longArgument,
+    $longerArgument,
+    $muchLongerArgument
+) use ($var1) {
+    // body
+};
+
+$shortArgs_longVars = function ($arg) use (
+    $longVar1,
+    $longerVar2,
+    $muchLongerVar3
+) {
+    // body
+};
+```
+
+Note that the formatting rules also apply when the closure is used directly in a function or method call as an argument.
+
+```php
+<?php
+$foo->bar(
+    $arg1,
+    function ($arg2) use ($var1) {
+        // body
+    },
+    $arg3
+);
+```
+
+## 7. Conclusion[](https://www.php-fig.org/psr/psr-2/#7-conclusion "Permalink")
+
+There are many elements of style and practice intentionally omitted by this guide. These include but are not limited to:
+
+- Declaration of global variables and global constants
+    
+- Declaration of functions
+    
+- Operators and assignment
+    
+- Inter-line alignment
+    
+- Comments and documentation blocks
+    
+- Class name prefixes and suffixes
+    
+- Best practices
+    
+
+Future recommendations MAY revise and extend this guide to address those or other elements of style and practice.
+
+## Appendix A. Survey[](https://www.php-fig.org/psr/psr-2/#appendix-a-survey "Permalink")
+
+In writing this style guide, the group took a survey of member projects to determine common practices. The survey is retained herein for posterity.
+
+### A.1. Survey Data[](https://www.php-fig.org/psr/psr-2/#a1-survey-data "Permalink")
+
+```php
+url,http://www.horde.org/apps/horde/docs/CODING_STANDARDS,http://pear.php.net/manual/en/standards.php,http://solarphp.com/manual/appendix-standards.style,http://framework.zend.com/manual/en/coding-standard.html,https://symfony.com/doc/2.0/contributing/code/standards.html,http://www.ppi.io/docs/coding-standards.html,https://github.com/ezsystems/ezp-next/wiki/codingstandards,http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html,https://github.com/UnionOfRAD/lithium/wiki/Spec%3A-Coding,http://drupal.org/coding-standards,http://code.google.com/p/sabredav/,http://area51.phpbb.com/docs/31x/coding-guidelines.html,https://docs.google.com/a/zikula.org/document/edit?authkey=CPCU0Us&hgd=1&id=1fcqb93Sn-hR9c0mkN6m_tyWnmEvoswKBtSc0tKkZmJA,http://www.chisimba.com,n/a,https://github.com/Respect/project-info/blob/master/coding-standards-sample.php,n/a,Object Calisthenics for PHP,http://doc.nette.org/en/coding-standard,http://flow3.typo3.org,https://github.com/propelorm/Propel2/wiki/Coding-Standards,http://developer.joomla.org/coding-standards.html
+voting,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,no,no,no,?,yes,no,yes
+indent_type,4,4,4,4,4,tab,4,tab,tab,2,4,tab,4,4,4,4,4,4,tab,tab,4,tab
+line_length_limit_soft,75,75,75,75,no,85,120,120,80,80,80,no,100,80,80,?,?,120,80,120,no,150
+line_length_limit_hard,85,85,85,85,no,no,no,no,100,?,no,no,no,100,100,?,120,120,no,no,no,no
+class_names,studly,studly,studly,studly,studly,studly,studly,studly,studly,studly,studly,lower_under,studly,lower,studly,studly,studly,studly,?,studly,studly,studly
+class_brace_line,next,next,next,next,next,same,next,same,same,same,same,next,next,next,next,next,next,next,next,same,next,next
+constant_names,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper
+true_false_null,lower,lower,lower,lower,lower,lower,lower,lower,lower,upper,lower,lower,lower,upper,lower,lower,lower,lower,lower,upper,lower,lower
+method_names,camel,camel,camel,camel,camel,camel,camel,camel,camel,camel,camel,lower_under,camel,camel,camel,camel,camel,camel,camel,camel,camel,camel
+method_brace_line,next,next,next,next,next,same,next,same,same,same,same,next,next,same,next,next,next,next,next,same,next,next
+control_brace_line,same,same,same,same,same,same,next,same,same,same,same,next,same,same,next,same,same,same,same,same,same,next
+control_space_after,yes,yes,yes,yes,yes,no,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes
+always_use_control_braces,yes,yes,yes,yes,yes,yes,no,yes,yes,yes,no,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,yes
+else_elseif_line,same,same,same,same,same,same,next,same,same,next,same,next,same,next,next,same,same,same,same,same,same,next
+case_break_indent_from_switch,0/1,0/1,0/1,1/2,1/2,1/2,1/2,1/1,1/1,1/2,1/2,1/1,1/2,1/2,1/2,1/2,1/2,1/2,0/1,1/1,1/2,1/2
+function_space_after,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no
+closing_php_tag_required,no,no,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,no,no,no,yes,no,no
+line_endings,LF,LF,LF,LF,LF,LF,LF,LF,?,LF,?,LF,LF,LF,LF,?,,LF,?,LF,LF,LF
+static_or_visibility_first,static,?,static,either,either,either,visibility,visibility,visibility,either,static,either,?,visibility,?,?,either,either,visibility,visibility,static,?
+control_space_parens,no,no,no,no,no,no,yes,no,no,no,no,no,no,yes,?,no,no,no,no,no,no,no
+blank_line_after_php,no,no,no,no,yes,no,no,no,no,yes,yes,no,no,yes,?,yes,yes,no,yes,no,yes,no
+class_method_control_brace,next/next/same,next/next/same,next/next/same,next/next/same,next/next/same,same/same/same,next/next/next,same/same/same,same/same/same,same/same/same,same/same/same,next/next/next,next/next/same,next/same/same,next/next/next,next/next/same,next/next/same,next/next/same,next/next/same,same/same/same,next/next/same,next/next/next
+```
+
+### A.2. Survey Legend[](https://www.php-fig.org/psr/psr-2/#a2-survey-legend "Permalink")
+
+`indent_type`: The type of indenting. `tab` = "Use a tab", `2` or `4` = "number of spaces"
+
+`line_length_limit_soft`: The "soft" line length limit, in characters. `?` = not discernible or no response, `no` means no limit.
+
+`line_length_limit_hard`: The "hard" line length limit, in characters. `?` = not discernible or no response, `no` means no limit.
+
+`class_names`: How classes are named. `lower` = lowercase only, `lower_under` = lowercase with underscore separators, `studly` = StudlyCase.
+
+`class_brace_line`: Does the opening brace for a class go on the `same` line as the class keyword, or on the `next` line after it?
+
+`constant_names`: How are class constants named? `upper` = Uppercase with underscore separators.
+
+`true_false_null`: Are the `true`, `false`, and `null` keywords spelled as all `lower` case, or all `upper` case?
+
+`method_names`: How are methods named? `camel` = `camelCase`, `lower_under` = lowercase with underscore separators.
+
+`method_brace_line`: Does the opening brace for a method go on the `same` line as the method name, or on the `next` line?
+
+`control_brace_line`: Does the opening brace for a control structure go on the `same` line, or on the `next` line?
+
+`control_space_after`: Is there a space after the control structure keyword?
+
+`always_use_control_braces`: Do control structures always use braces?
+
+`else_elseif_line`: When using `else` or `elseif`, does it go on the `same` line as the previous closing brace, or does it go on the `next` line?
+
+`case_break_indent_from_switch`: How many times are `case` and `break` indented from an opening `switch` statement?
+
+`function_space_after`: Do function calls have a space after the function name and before the opening parenthesis?
+
+`closing_php_tag_required`: In files containing only PHP, is the closing `?>` tag required?
+
+`line_endings`: What type of line ending is used?
+
+`static_or_visibility_first`: When declaring a method, does `static` come first, or does the visibility come first?
+
+`control_space_parens`: In a control structure expression, is there a space after the opening parenthesis and a space before the closing parenthesis? `yes` = `if ( $expr )`, `no` = `if ($expr)`.
+
+`blank_line_after_php`: Is there a blank line after the opening PHP tag?
+
+`class_method_control_brace`: A summary of what line the opening braces go on for classes, methods, and control structures.
+
+### A.3. Survey Results[](https://www.php-fig.org/psr/psr-2/#a3-survey-results "Permalink")
+
+```php
+indent_type:
+    tab: 7
+    2: 1
+    4: 14
+line_length_limit_soft:
+    ?: 2
+    no: 3
+    75: 4
+    80: 6
+    85: 1
+    100: 1
+    120: 4
+    150: 1
+line_length_limit_hard:
+    ?: 2
+    no: 11
+    85: 4
+    100: 3
+    120: 2
+class_names:
+    ?: 1
+    lower: 1
+    lower_under: 1
+    studly: 19
+class_brace_line:
+    next: 16
+    same: 6
+constant_names:
+    upper: 22
+true_false_null:
+    lower: 19
+    upper: 3
+method_names:
+    camel: 21
+    lower_under: 1
+method_brace_line:
+    next: 15
+    same: 7
+control_brace_line:
+    next: 4
+    same: 18
+control_space_after:
+    no: 2
+    yes: 20
+always_use_control_braces:
+    no: 3
+    yes: 19
+else_elseif_line:
+    next: 6
+    same: 16
+case_break_indent_from_switch:
+    0/1: 4
+    1/1: 4
+    1/2: 14
+function_space_after:
+    no: 22
+closing_php_tag_required:
+    no: 19
+    yes: 3
+line_endings:
+    ?: 5
+    LF: 17
+static_or_visibility_first:
+    ?: 5
+    either: 7
+    static: 4
+    visibility: 6
+control_space_parens:
+    ?: 1
+    no: 19
+    yes: 2
+blank_line_after_php:
+    ?: 1
+    no: 13
+    yes: 8
+class_method_control_brace:
+    next/next/next: 4
+    next/next/same: 11
+    next/same/same: 1
+    same/same/same: 6
+```
+</file>
+
+<file path="rfc2119/rfc2119.md">
+[[RFC Home](https://www.rfc-editor.org/ "RFC Editor")] [[TEXT](https://www.rfc-editor.org/rfc/rfc2119.txt)|[PDF](https://www.rfc-editor.org/rfc/pdfrfc/rfc2119.txt.pdf)|[HTML](https://www.rfc-editor.org/rfc/rfc2119.html)] [[Tracker](https://datatracker.ietf.org/doc/rfc2119 "IETF Datatracker information for this document")] [[IPR](https://datatracker.ietf.org/ipr/search/?rfc=2119&submit=rfc "IPR disclosures related to this document")] [[Errata](https://www.rfc-editor.org/errata/rfc2119)] [[Info page](https://www.rfc-editor.org/info/rfc2119 "Info page")]  
+  
+BEST CURRENT PRACTICE  
+Updated by: [8174](https://www.rfc-editor.org/rfc/rfc8174) Errata Exist
+
+Network Working Group                                         S. Bradner
+Request for Comments: 2119                            Harvard University
+BCP: 14                                                       March 1997
+Category: Best Current Practice
+
+
+        Key words for use in RFCs to Indicate Requirement Levels
+
+Status of this Memo
+
+   This document specifies an Internet Best Current Practices for the
+   Internet Community, and requests discussion and suggestions for
+   improvements.  Distribution of this memo is unlimited.
+
+Abstract
+
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
+
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+
+[1](https://www.rfc-editor.org/rfc/rfc2119.html#section-1). MUST   This word, or the terms "REQUIRED" or "SHALL", mean that the
+   definition is an absolute requirement of the specification.
+
+[2](https://www.rfc-editor.org/rfc/rfc2119.html#section-2). MUST NOT   This phrase, or the phrase "SHALL NOT", mean that the
+   definition is an absolute prohibition of the specification.
+
+[3](https://www.rfc-editor.org/rfc/rfc2119.html#section-3). SHOULD   This word, or the adjective "RECOMMENDED", mean that there
+   may exist valid reasons in particular circumstances to ignore a
+   particular item, but the full implications must be understood and
+   carefully weighed before choosing a different course.
+
+[4](https://www.rfc-editor.org/rfc/rfc2119.html#section-4). SHOULD NOT   This phrase, or the phrase "NOT RECOMMENDED" mean that
+   there may exist valid reasons in particular circumstances when the
+   particular behavior is acceptable or even useful, but the full
+   implications should be understood and the case carefully weighed
+   before implementing any behavior described with this label.
+
+Bradner                  Best Current Practice                  [Page 1]
+
+---
+
+[RFC 2119](https://www.rfc-editor.org/rfc/rfc2119)                     RFC Key Words                    March 1997
+
+[5](https://www.rfc-editor.org/rfc/rfc2119.html#section-5). MAY   This word, or the adjective "OPTIONAL", mean that an item is
+   truly optional.  One vendor may choose to include the item because a
+   particular marketplace requires it or because the vendor feels that
+   it enhances the product while another vendor may omit the same item.
+   An implementation which does not include a particular option MUST be
+   prepared to interoperate with another implementation which does
+   include the option, though perhaps with reduced functionality. In the
+   same vein an implementation which does include a particular option
+   MUST be prepared to interoperate with another implementation which
+   does not include the option (except, of course, for the feature the
+   option provides.)
+
+[6](https://www.rfc-editor.org/rfc/rfc2119.html#section-6). Guidance in the use of these Imperatives
+
+   Imperatives of the type defined in this memo must be used with care
+   and sparingly.  In particular, they MUST only be used where it is
+   actually required for interoperation or to limit behavior which has
+   potential for causing harm (e.g., limiting retransmisssions)  For
+   example, they must not be used to try to impose a particular method
+   on implementors where the method is not required for
+   interoperability.
+
+[7](https://www.rfc-editor.org/rfc/rfc2119.html#section-7). Security Considerations
+
+   These terms are frequently used to specify behavior with security
+   implications.  The effects on security of not implementing a MUST or
+   SHOULD, or doing something the specification says MUST NOT or SHOULD
+   NOT be done may be very subtle. Document authors should take the time
+   to elaborate the security implications of not following
+   recommendations or requirements as most implementors will not have
+   had the benefit of the experience and discussion that produced the
+   specification.
+
+[8](https://www.rfc-editor.org/rfc/rfc2119.html#section-8). Acknowledgments
+
+   The definitions of these terms are an amalgam of definitions taken
+   from a number of RFCs.  In addition, suggestions have been
+   incorporated from a number of people including Robert Ullmann, Thomas
+   Narten, Neal McBurnett, and Robert Elz.
+
+Bradner                  Best Current Practice                  [Page 2]
+
+---
+
+[RFC 2119](https://www.rfc-editor.org/rfc/rfc2119)                     RFC Key Words                    March 1997
+
+[9](https://www.rfc-editor.org/rfc/rfc2119.html#section-9). Author's Address
+
+      Scott Bradner
+      Harvard University
+      1350 Mass. Ave.
+      Cambridge, MA 02138
+
+      phone - +1 617 495 3864
+
+      email - sob@harvard.edu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Bradner                  Best Current Practice                  [Page 3]
+</file>
+
+<file path=".gitignore">
+/.obsidian/
+/.idea/
+</file>
+
+</files>
